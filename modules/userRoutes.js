@@ -6,7 +6,7 @@ const {
     updateUserById,
     deleteUserById,
     getAllUsers,
-} = require('./userController'); // Import controller functions for the User model
+} = require('./controller/userController'); // Import controller functions for the User model
 
 // Create routes for User model
 router.get('/users', getAllUsers);

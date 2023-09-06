@@ -1,62 +1,30 @@
 
-const BookModel = require('./models/book'); // Import the User model
-const UserModel = require('./models/user'); // Import the Book model
+const UserModel = require('../models/user'); // Import the User model
 
-exports.getAllBooks = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
     try {
-        // const books = await BookModel.find();
-        // const response = {
-        //     status: "success",
-        //     message: "Data get successfully",
-        //     data: books
-        // };
-        const books = await BookModel.find()
-            .populate('user'); // Populate the user field in each book document
-
-        // Create an array to store books with user details
-        const booksWithUserDetails = [];
-
-        for (const book of books) {
-            const user = await UserModel.findById(book.user);
-
-            // Create an object that combines book and user details
-            const bookWithUser = {
-                _id: book._id,
-                title: book.title,
-                // Add other book-related fields as needed
-                user: {
-                    _id: user._id,
-                    name: user.name,
-                    email:user.email,
-                    age:user.age
-                    // Add other user-related fields as needed
-                },
-            };
-
-            booksWithUserDetails.push(bookWithUser);
-        }
-
+        const users = await UserModel.find();
         const response = {
             status: "success",
             message: "Data get successfully",
-            data: booksWithUserDetails, // Send the array of books with user details
+            data: users
         };
         res.json(response)
     } catch (err) {
-        res.status(500).json({ error: "Error fetching books " + err });
+        res.status(500).json({ error: "Error fetching users" + err });
     }
 };
 
 // Create a new user
-exports.createBook = async (req, res) => {
+exports.createUser = async (req, res) => {
     // Your create user logic here
     try {
-        let author = await UserModel.findOne({ name: req.body.name });
-        const bookDetails = new BookModel({
-            title: req.body.title,
-            user: author,   
+        const userDetails = new UserModel({
+            name: req.body.name,
+            email: req.body.email,
+            age:req.body.age
         });
-        const doc = await bookDetails.save();
+        const doc = await userDetails.save();
         const response = {
             status: "success",
             message: "Data get successfully",
@@ -71,43 +39,29 @@ exports.createBook = async (req, res) => {
 
 // Find a user by ID
 exports.findUserById = async (req, res) => {
-    // Your find user by ID logic here 
+    // Your find user by ID logic here
     try {
-        const bookId = req.params.bookId;
-        const book = await BookModel.findById(bookId).populate('user');
+        const userId = req.params.userId;
+        const user = await UserModel.findById(userId).select("name email age");
 
-        if (!book) {
-          return res.status(404).json({ error: 'Book not found' });
-        }    
-
-        if (book.user) {
-            userDetails = {
-                _id: book.user._id,
-                name: book.user.name,
-                email:book.user.email,
-                age:book.user.age
-            };
+        if (!user) {
+            return res.status(404).json({
+                status: "error",
+                message: "User not found"
+            });
         }
-          // Create a response object that includes both book and author details
-          const response1 = {
-            _id: book._id,
-            title: book.title,
-            author: userDetails,
-          };
 
         const response = {
             status: "success",
             message: "User retrieved successfully",
-            data: response1
+            data: user
         };
-
         res.json(response);
-        
     } catch (err) {
         console.log("error -", err);
         res.status(500).json({
             status: "error",
-            message: "Error fetching user data"+err
+            message: "Error fetching user data"
         });
     }
 };

@@ -3,15 +3,15 @@ const router = express.Router();
 const {
     getAllBooks,
     createBook,
-    findUserById,
+    findBookById,
     updateUserById,
     deleteUserById,
-} = require('./bookController'); // Import controller functions for the User model
+} = require('./controller/bookController'); // Import controller functions for the Book model
 
-// Create routes for User model
+// Create routes for Book model
 router.get('/books', getAllBooks);
 router.post('/books', createBook);
-router.get('/books/:bookId', findUserById);
+router.get('/books/:bookId', findBookById);
 router.put('/books/:booksId', updateUserById);
 router.delete('/books/:booksId', deleteUserById);
 
