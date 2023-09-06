@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors =require('cors');
-
+const cron = require('node-cron'); 
 const db = require('./conf/database.js');  
 
 //api
@@ -23,6 +23,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api', routes);
 
+
+function myCronJob() {
+  console.log('Cron job executed at:', new Date());
+  // Add your task logic here
+}
+cron.schedule('*/10 * * * * *', () => {
+  console.log('Running a job at 01:00 at America/Sao_Paulo timezone');
+}, {
+  scheduled: false,
+  timezone: "Asia/Kolkata"
+});
+// cron.schedule('0 0 * * *', myCronJob);
+// cron.schedule('*/10 * * * * *', myCronJob);
+
+// cron.schedule('*/10 * * * *', myCronJob);
+
+
 // NodeExpress
 // mongoose.connect('mongodb://127.0.0.1:27017/NodeExpress', { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -34,11 +51,11 @@ app.use('/api', routes);
 app.use((req, res) => {
     res.status(404).json({ error: 'Route not found' });
   });
+    
 
 // var server = app.listen(5005, function () {
 //     var host = server.address().address
 //     var port = server.address().port
-
 //     console.log("Example app listening at http://%s:%s", host, port)
 //  })
 

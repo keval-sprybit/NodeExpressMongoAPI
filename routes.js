@@ -6,11 +6,13 @@ const userRoutes = require('./modules/userRoutes');
 
 // Import book routes from bookRoutes.js
 const bookRoutes = require('./modules/bookRoutes');
+const customerRoutes = require('./modules/customerRoutes');
 
 // Define routes for users
 router.use(userRoutes);
 
 // Define routes for books
 router.use(bookRoutes);
+router.use(customerRoutes);
 
 module.exports = router;
