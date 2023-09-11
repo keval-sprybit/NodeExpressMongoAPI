@@ -1,6 +1,7 @@
 
 const CustomerModel = require('../models/customer'); // Import the User model
-
+const jwt = require('jsonwebtoken'); 
+const JWT_SECRET = 'your-secret-key';
 exports.getAllcustomer = async (req, res) => {
     try {
         const users = await CustomerModel.find();
@@ -92,10 +93,21 @@ exports.customer_signin = async (req, res) => {
         if (!user || user.password !== password) {
             res.status(401).json({ error: 'Authentication failed' });
         } else {
-            res.json({ message: 'Login successful' });
+            // res.json({ message: 'Login successful' });
+            const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+            user.access_token = token;
+
+            // Save the updated user document with the new access_token
+            await user.save();
+            // Return the token in the response
+            res.json({ message: 'Login successful', token });
         }
     } catch (error) {
-        res.status(400).json({ error: 'Login failed' });
+        console.log("error -", error);
+        res.status(500).json({
+            status: "error",
+            message: "Login Fail"
+        });
     }
 
 };

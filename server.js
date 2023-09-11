@@ -4,10 +4,11 @@ const bodyParser = require('body-parser');
 const cors =require('cors');
 const cron = require('node-cron'); 
 const db = require('./conf/database.js');  
-
+const jwt = require('jsonwebtoken');
 //api
 const routes = require('./routes');
 
+const JWT_SECRET = 'your-secret-key';
 // Use the routes defined in routes.js
 
 // const userRoutes = require('./userRoutes');

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { verifyToken } = require('./middleware/authMiddleware');
 const {
     createUser,
     findUserById,
@@ -14,7 +15,7 @@ const {
 router.get('/auth/signin', customer_signin);
 router.get('/auth/signup', customer_signup);
 
-router.get('/customers', getAllcustomer);
+router.get('/customers', verifyToken,getAllcustomer);
 router.post('/customers', createUser);
 router.get('/customers/:customerId', findUserById);
 router.put('/customers/:customerId', updateUserById);
