@@ -19,6 +19,11 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
 
+// var corsOptions = {
+//   origin: "http://localhost:8081"
+// };
+
+// app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true })); 
 
 app.use('/api', routes);
@@ -28,12 +33,13 @@ function myCronJob() {
   console.log('Cron job executed at:', new Date());
   // Add your task logic here
 }
-cron.schedule('*/10 * * * * *', () => {
-  console.log('Running a job at 01:00 at America/Sao_Paulo timezone');
-}, {
-  scheduled: false,
-  timezone: "Asia/Kolkata"
-});
+// cron.schedule('*/10 * * * * *', () => {
+//   console.log('Running a job at 01:00 at America/Sao_Paulo timezone');
+// }, {
+//   scheduled: false,
+//   timezone: "Asia/Kolkata"
+// });
+
 // cron.schedule('0 0 * * *', myCronJob);
 // cron.schedule('*/10 * * * * *', myCronJob);
 

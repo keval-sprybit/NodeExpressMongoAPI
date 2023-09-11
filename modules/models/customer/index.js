@@ -9,7 +9,7 @@ const customerSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        // unique: true,
+        unique: true,
     },
     password: {
         type: String,
@@ -17,7 +17,7 @@ const customerSchema = new mongoose.Schema({
     },
     access_token:{
         type:String,
-        required:true,
+        required:false,
     }
 
     
