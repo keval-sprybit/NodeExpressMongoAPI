@@ -12,8 +12,8 @@ const {
 } = require('./controller/customerController'); // Import controller functions for the User model
 
 // Create routes for User model
-router.get('/auth/signin', customer_signin);
-router.get('/auth/signup', customer_signup);
+router.post ('/auth/signin', customer_signin);
+router.post('/auth/signup', customer_signup);
 
 router.get('/customers', verifyToken,getAllcustomer);
 router.post('/customers', createUser);

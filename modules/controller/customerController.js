@@ -1,7 +1,11 @@
 
 const CustomerModel = require('../models/customer'); // Import the User model
-const jwt = require('jsonwebtoken'); 
+const jwt = require('jsonwebtoken');
 const JWT_SECRET = 'your-secret-key';
+
+var settings = require('../common/settings');
+var common_methods = require('../common/common_methods');
+
 exports.getAllcustomer = async (req, res) => {
     try {
         const users = await CustomerModel.find();
@@ -20,17 +24,22 @@ exports.getAllcustomer = async (req, res) => {
 exports.createUser = async (req, res) => {
     // Your create user logic here
     try {
-        const userDetails = new CustomerModel({
-            name: req.body.name,
-            email: req.body.email,
-            age: req.body.age
-        });
-        const doc = await userDetails.save();
+        for (let index = 0; index < 5; index++) {
+
+            const userDetails = new CustomerModel({
+                name: req.body.name + '' + index,
+                email: req.body.email + '' + index,
+                age: req.body.age
+            });
+            const doc = await userDetails.save();
+
+        }
         const response = {
             status: "success",
             message: "Data get successfully",
-            data: doc
+            data: 'done'
         };
+
         res.json(response)
     } catch (err) {
 
@@ -91,23 +100,31 @@ exports.customer_signin = async (req, res) => {
         const user = await CustomerModel.findOne({ email });
 
         if (!user || user.password !== password) {
-            res.status(401).json({ error: 'Authentication failed' });
-        } else {
-            // res.json({ message: 'Login successful' });
-            const token = jwt.sign({ userId: user._id }, JWT_SECRET);
-            user.access_token = token;
 
-            // Save the updated user document with the new access_token
+            // res.status(200).json({ error: 'Authentication failed' });
+            common_methods.sendResponse(res, false, 200,'', 'Authentication failed','');
+        } else {
+            
+            const token = jwt.sign({ userId: user._id }, settings.JWT_SECRET);
+            user.access_token = token;
             await user.save();
             // Return the token in the response
-            res.json({ message: 'Login successful', token });
+            // const response = {
+            //     status: true,
+            //     message: "Login successful",
+            //     data: [{ token }]
+            // };
+
+        common_methods.sendResponse(res, true, 200, { token },'Login successful', '');
+            // res.status(200).json(response);
         }
     } catch (error) {
         console.log("error -", error);
-        res.status(500).json({
-            status: "error",
-            message: "Login Fail"
-        });
+        // res.status(500).json({
+        //     status: false,
+        //     message: "Login Fail"
+        // });
+        common_methods.sendResponse(res, false, 500, '','something wrong', error);
     }
 
 };
@@ -144,33 +161,45 @@ exports.customer_signup = async (req, res) => {
          };
          res.json(response); */
 
+
         const { name, email, password, access_token } = req.body;
         // Create a new user
+
         const existingUser = await CustomerModel.findOne({ email });
 
         if (existingUser) {
-            return res.status(400).json({
-                status: "error",
-                message: "Email already in use"
-            });
+            // return res.status(201).json({
+            //     status: "error",
+            //     message: "Email already in use ",
+            //     data:[]
+            // });
+            common_methods.sendResponse(res, false, 200, '','Email already in use' ,'');
         }
-        const user = new CustomerModel({ name, email, password, access_token });
+        //  
+        const user = new CustomerModel({
+            name,
+            email,
+            password
+        });
+        await user.save();
 
         // Save the user to the database
-        await user.save();
         const response = {
             status: "success",
-            message: "Data add successfully",
+            message: "Data add successfully ",
             data: user
         };
-        res.status(201).json(response)
+        // res.status(201).json(response)
+        common_methods.sendResponse(res, true, 200, '','User Created !!' ,'');
 
-    } catch (err) {
-        console.log("error -", err);
-        res.status(500).json({
-            status: "error",
-            message: "Error while customer signup try later"
-        });
+    } catch (error) {
+        console.log("error -", error);
+        // res.status(500).json({
+        //     status: false,
+        //     message: "Login Fail"
+        // });
+        common_methods.sendResponse(res, false, 500, '','something wrong', error);
     }
+    
 
 };
