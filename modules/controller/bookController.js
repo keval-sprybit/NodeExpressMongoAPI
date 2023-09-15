@@ -1,6 +1,7 @@
 
-const BookModel = require('../models/book'); // Import the User model
-const UserModel = require('../models/user'); // Import the Book model
+const BookModel = require('../models/book'); // Import the Book model
+const UserModel = require('../models/user'); // Import the user model
+const CustomerModel = require('../models/customer'); // Import the Book model
 
 exports.getAllBooks = async (req, res) => {
     try {
@@ -10,7 +11,7 @@ exports.getAllBooks = async (req, res) => {
         //     message: "Data get successfully",
         //     data: books
         // };
-        const books = await BookModel.find()
+        const books = await BookModel.find({ user: req.userId })
             .populate('user'); // Populate the user field in each book document
 
         // Create an array to store books with user details
@@ -42,11 +43,13 @@ exports.getAllBooks = async (req, res) => {
             const bookWithUser = {
                 _id: book._id,
                 title: book.title,
+                price: book.price,
+                pages: book.pages,
                 user: {
                     _id: user._id,
                     name: user.name,
                     email: user.email,
-                    age: user.age
+
                 },
             };
             booksWithUserDetails.push(bookWithUser);
@@ -67,9 +70,11 @@ exports.getAllBooks = async (req, res) => {
 exports.createBook = async (req, res) => {
     // Your create user logic here
     try {
-        let author = await UserModel.findOne({ name: req.body.name });
+        let author = await CustomerModel.findOne({ _id: req.userId });
         const bookDetails = new BookModel({
             title: req.body.title,
+            price: req.body.price,
+            pages: req.body.pages,
             user: author,
         });
         const doc = await bookDetails.save();

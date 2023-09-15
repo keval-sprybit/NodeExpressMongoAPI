@@ -6,9 +6,17 @@ const bookSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    price: {
+        type: Number,
+        required: true,
+    },
+    pages: {
+        type: Number,
+        required: true,
+    },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'Customer', // Reference to the User model
   },
 },
 {

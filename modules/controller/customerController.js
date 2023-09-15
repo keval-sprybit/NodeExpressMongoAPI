@@ -8,6 +8,7 @@ var common_methods = require('../common/common_methods');
 
 exports.getAllcustomer = async (req, res) => {
     try {
+        // console.log("reuest",req.userId)
         const users = await CustomerModel.find();
         const response = {
             status: "success",
@@ -105,7 +106,7 @@ exports.customer_signin = async (req, res) => {
             common_methods.sendResponse(res, false, 200,'', 'Authentication failed','');
         } else {
             
-            const token = jwt.sign({ userId: user._id }, settings.JWT_SECRET);
+            const token = jwt.sign({ userId: user._id }, settings.JWT_SECRET); // { expiresIn: '30s' }
             user.access_token = token;
             await user.save();
             // Return the token in the response
