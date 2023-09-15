@@ -39,7 +39,8 @@ var sendResponse = function(res, status, statusCode='200', data,message='', erro
       error: errorMsg,
       message,
     };
-    res.status(statusCode).json(response);
+    // res.status(statusCode).json(response);
+    res.json(response);
   }
 
 
