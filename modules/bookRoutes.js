@@ -5,15 +5,15 @@ const {
     getAllBooks,
     createBook,
     findBookById,
-    updateUserById,
-    deleteUserById,
+    updateBookById,
+    deleteBookById,
 } = require('./controller/bookController'); // Import controller functions for the Book model
 
 // Create routes for Book model
 router.get('/books', verifyToken,getAllBooks);
 router.post('/books',verifyToken ,createBook);
 router.get('/books/:bookId',verifyToken ,findBookById);
-router.put('/books/:booksId',verifyToken ,updateUserById);
-router.delete('/books/:booksId',verifyToken ,deleteUserById);
+router.put('/books/:bookId',verifyToken ,updateBookById);
+router.delete('/books/:bookId',verifyToken ,deleteBookById);
 
 module.exports = router;

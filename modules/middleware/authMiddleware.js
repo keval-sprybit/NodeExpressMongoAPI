@@ -28,7 +28,7 @@ const JWT_SECRET = 'your-secret-key';
 const verifyToken = async (req, res, next) => {
   // const token = req.headers.authorization;
   console.log("----------------------------")
-  console.log("Request URL", req.originalUrl)
+  console.log("Request URL", req.originalUrl,req.method)
   const authorizationHeader = req.headers.authorization;
 
   if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ') || authorizationHeader === undefined) {
