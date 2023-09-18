@@ -1,6 +1,9 @@
 
-const BookModel = require('../models/book'); // Import the User model
-const UserModel = require('../models/user'); // Import the Book model
+const BookModel = require('../models/book'); // Import the Book model
+const UserModel = require('../models/user'); // Import the user model
+const CustomerModel = require('../models/customer'); // Import the Book model
+
+var common_methods = require('../common/common_methods');
 
 exports.getAllBooks = async (req, res) => {
     try {
@@ -10,7 +13,7 @@ exports.getAllBooks = async (req, res) => {
         //     message: "Data get successfully",
         //     data: books
         // };
-        const books = await BookModel.find()
+        const books = await BookModel.find({ user: req.userId })
             .populate('user'); // Populate the user field in each book document
 
         // Create an array to store books with user details
@@ -42,11 +45,13 @@ exports.getAllBooks = async (req, res) => {
             const bookWithUser = {
                 _id: book._id,
                 title: book.title,
+                price: book.price,
+                pages: book.pages,
                 user: {
                     _id: user._id,
                     name: user.name,
                     email: user.email,
-                    age: user.age
+
                 },
             };
             booksWithUserDetails.push(bookWithUser);
@@ -67,9 +72,11 @@ exports.getAllBooks = async (req, res) => {
 exports.createBook = async (req, res) => {
     // Your create user logic here
     try {
-        let author = await UserModel.findOne({ name: req.body.name });
+        let author = await CustomerModel.findOne({ _id: req.userId });
         const bookDetails = new BookModel({
             title: req.body.title,
+            price: req.body.price,
+            pages: req.body.pages,
             user: author,
         });
         const doc = await bookDetails.save();
@@ -129,65 +136,56 @@ exports.findBookById = async (req, res) => {
 };
 
 // Update a user by ID
-exports.updateUserById = async (req, res) => {
+exports.updateBookById = async (req, res) => {
     // Your update user by ID logic here
     try {
-        const userId = req.params.userId;
+        console.log("book update callled")
+
+        const bookId = req.params.bookId;
 
         // Define the updated data
         const updatedData = {
-            name: req.body.name,
-            email: req.body.email
-            // Add other fields to update as needed
-        };
+            title: req.body.title,
+            price: req.body.price,
+            pages: req.body.pages
 
-        const updatedUser = await UserModel.findByIdAndUpdate(userId, updatedData, {
+        };
+        console.log("book id", bookId, updatedData)
+        // return;
+
+        const updatedUser = await BookModel.findByIdAndUpdate(bookId, updatedData, {
             new: true, // Return the updated document
             runValidators: true // Run validation on updated data
-        }).select("name email age");
+        });
 
         if (!updatedUser) {
-            return res.status(404).json({
-                status: "error",
-                message: "User not found"
-            });
+
+            common_methods.sendResponse(res, false, 200, '', 'User not found', 'error');
         }
 
-        const response = {
-            status: "success",
-            message: "User updated successfully",
-            data: updatedUser
-        };
-        res.json(response);
+        common_methods.sendResponse(res, true, 200, '', 'Data added successful', '');
     } catch (err) {
         console.log("error -", err);
-        res.status(500).json({
-            status: "error",
-            message: "Error updating user data"
-        });
+        // res.status(500).json({
+        //     status: "error",
+        //     message: "Error updating user data"
+        // });
+        common_methods.sendResponse(res, false, 200, '', 'Error updating book', '');
     }
 };
 
 // Delete a user by ID
-exports.deleteUserById = async (req, res) => {
+exports.deleteBookById = async (req, res) => {
     // Your delete user by ID logic here
     try {
-        const userId = req.params.userId;
-        const deletedUser = await UserModel.findByIdAndRemove(userId);
+        const bookId = req.params.bookId;
+        const deletedBook = await BookModel.findByIdAndRemove(bookId);
 
-        if (!deletedUser) {
-            return res.status(404).json({
-                status: "error",
-                message: "User not found"
-            });
+        if (!deletedBook) {
+            common_methods.sendResponse(res, false, 200, '', 'Book Not Found', '');
         }
 
-        const response = {
-            status: "success",
-            message: "User deleted successfully",
-            data: deletedUser
-        };
-        res.status(200).json(response);
+        common_methods.sendResponse(res, true, 200, '', 'Book deleted successfully', '');
     } catch (err) {
         console.log("error -", err);
         res.status(500).json({
