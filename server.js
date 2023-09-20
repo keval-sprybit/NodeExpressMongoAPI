@@ -1,10 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cors =require('cors');
-const cron = require('node-cron'); 
-const db = require('./conf/database.js');  
+const cors = require('cors');
+const cron = require('node-cron');
+const db = require('./conf/database.js');
 const jwt = require('jsonwebtoken');
+
+
+
 //api
 const routes = require('./routes');
 
@@ -25,9 +28,11 @@ app.use(cors());
 // };
 
 // app.use(cors(corsOptions));
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api', routes);
+
+
 
 
 function myCronJob() {
@@ -56,9 +61,9 @@ function myCronJob() {
 // app.use('/api', bookRoutes);
 
 app.use((req, res) => {
-    res.status(404).json({ error: 'Route not found' });
-  });
-    
+  res.status(404).json({ error: 'Route not found' });
+});
+
 
 // var server = app.listen(5005, function () {
 //     var host = server.address().address
@@ -68,5 +73,5 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 5005;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

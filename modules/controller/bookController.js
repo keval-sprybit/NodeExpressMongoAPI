@@ -194,3 +194,62 @@ exports.deleteBookById = async (req, res) => {
         });
     }
 };
+exports.getAllDataTableBooks = async (req, res) => {
+    try {
+        const { page = 1, itemsPerPage = 5, title, sortBy, sortOrder } = req.query;
+
+        const query = { user: req.userId };
+        if (title) {
+            query.title = { $regex: new RegExp(title, 'i') };
+        }
+        const sortOptions = {};
+        if (sortBy && sortOrder) {
+            sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+        }
+
+        const totalBooks = await BookModel.countDocuments(query);
+
+        // const books = await BookModel.find({ user: req.userId })
+        //   .populate('user')
+        //   .skip((page - 1) * itemsPerPage)
+        //   .limit(parseInt(itemsPerPage));
+        let books;
+        // if (page === 'all') {
+        if (itemsPerPage==-1) {
+            books = await BookModel.find(query).sort(sortOptions).lean();
+        }
+        else {
+            books = await BookModel.find(query)
+                .populate('user')
+                .sort(sortOptions)
+                .skip((page - 1) * itemsPerPage)
+                .limit(parseInt(itemsPerPage));
+        }
+        const booksWithUserDetails = books.map(book => ({
+            _id: book._id,
+            title: book.title,
+            price: book.price,
+            pages: book.pages,
+            user: {
+                _id: book.user._id,
+                name: book.user.name,
+                email: book.user.email,
+            },
+        }));
+
+        // const response = {
+        //     status: "success",
+        //     message: "Data retrieved successfully",
+        //     data: {
+        //         books: booksWithUserDetails,
+        //         totalItems: totalBooks
+        //     }
+        // };
+        // res.json(response)
+        common_methods.sendResponse(res, true, 200, { 'data': booksWithUserDetails, 'totalItems': totalBooks }, 'Data retrieved successfully', '');
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+
+}

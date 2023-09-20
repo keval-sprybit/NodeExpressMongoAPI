@@ -7,10 +7,12 @@ const {
     findBookById,
     updateBookById,
     deleteBookById,
+    getAllDataTableBooks
 } = require('./controller/bookController'); // Import controller functions for the Book model
 
 // Create routes for Book model
-router.get('/books', verifyToken,getAllBooks);
+// router.get('/books', verifyToken,getAllBooks);
+router.get('/books', verifyToken,getAllDataTableBooks);
 router.post('/books',verifyToken ,createBook);
 router.get('/books/:bookId',verifyToken ,findBookById);
 router.put('/books/:bookId',verifyToken ,updateBookById);

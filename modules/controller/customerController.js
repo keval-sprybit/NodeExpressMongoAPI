@@ -3,6 +3,8 @@ const CustomerModel = require('../models/customer'); // Import the User model
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = 'your-secret-key';
 
+const sendEmail = require('./emailController'); // Import the sendEmail function
+
 var settings = require('../common/settings');
 var common_methods = require('../common/common_methods');
 
@@ -103,12 +105,26 @@ exports.customer_signin = async (req, res) => {
         if (!user || user.password !== password) {
 
             // res.status(200).json({ error: 'Authentication failed' });
-            common_methods.sendResponse(res, false, 200,'', 'Authentication failed','');
+            common_methods.sendResponse(res, false, 200, '', 'Authentication failed', '');
         } else {
-            
+
             const token = jwt.sign({ userId: user._id }, settings.JWT_SECRET); // { expiresIn: '30s' }
             user.access_token = token;
             await user.save();
+            
+            var to = user.email;
+            var subject = "this is res called subject";
+            var html = "this is text";
+            
+            await sendEmail(to, subject, html)
+                .then(info => {
+                    // res.send('Email sent: ' + info.response);
+                    console.log("email sent")
+                })
+                .catch(error => {
+                    // res.status(500).send('Error sending email: ' + error);
+                    console.log("email error ",error)
+                });
             // Return the token in the response
             // const response = {
             //     status: true,
@@ -116,7 +132,7 @@ exports.customer_signin = async (req, res) => {
             //     data: [{ token }]
             // };
 
-        common_methods.sendResponse(res, true, 200, { token },'Login successful', '');
+            common_methods.sendResponse(res, true, 200, { token }, 'Login successful', '');
             // res.status(200).json(response);
         }
     } catch (error) {
@@ -125,7 +141,7 @@ exports.customer_signin = async (req, res) => {
         //     status: false,
         //     message: "Login Fail"
         // });
-        common_methods.sendResponse(res, false, 500, '','something wrong', error);
+        common_methods.sendResponse(res, false, 500, '', 'something wrong', error);
     }
 
 };
@@ -174,7 +190,7 @@ exports.customer_signup = async (req, res) => {
             //     message: "Email already in use ",
             //     data:[]
             // });
-            common_methods.sendResponse(res, false, 200, '','Email already in use' ,'');
+            common_methods.sendResponse(res, false, 200, '', 'Email already in use', '');
         }
         //  
         const user = new CustomerModel({
@@ -191,7 +207,7 @@ exports.customer_signup = async (req, res) => {
             data: user
         };
         // res.status(201).json(response)
-        common_methods.sendResponse(res, true, 200, '','User Created !!' ,'');
+        common_methods.sendResponse(res, true, 200, '', 'User Created !!', '');
 
     } catch (error) {
         console.log("error -", error);
@@ -199,8 +215,9 @@ exports.customer_signup = async (req, res) => {
         //     status: false,
         //     message: "Login Fail"
         // });
-        common_methods.sendResponse(res, false, 500, '','something wrong', error);
+        common_methods.sendResponse(res, false, 500, '', 'something wrong', error);
     }
-    
+
 
 };
+
