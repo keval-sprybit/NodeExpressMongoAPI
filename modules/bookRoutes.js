@@ -12,7 +12,8 @@ const {
 
 // Create routes for Book model
 // router.get('/books', verifyToken,getAllBooks);
-router.get('/books', verifyToken,getAllDataTableBooks);
+// router.get('/books', verifyToken,getAllDataTableBooks);
+router.post('/books/data-list', verifyToken,getAllDataTableBooks);
 router.post('/books',verifyToken ,createBook);
 router.get('/books/:bookId',verifyToken ,findBookById);
 router.put('/books/:bookId',verifyToken ,updateBookById);

@@ -196,7 +196,7 @@ exports.deleteBookById = async (req, res) => {
 };
 exports.getAllDataTableBooks = async (req, res) => {
     try {
-        const { page = 1, itemsPerPage = 5, title, sortBy, sortOrder } = req.query;
+        const { page = 1, itemsPerPage = 5, title, sortBy, sortOrder } = req.body;
 
         const query = { user: req.userId };
         if (title) {
@@ -249,7 +249,8 @@ exports.getAllDataTableBooks = async (req, res) => {
         common_methods.sendResponse(res, true, 200, { 'data': booksWithUserDetails, 'totalItems': totalBooks }, 'Data retrieved successfully', '');
 
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        // res.status(500).json({ message: error.message });
+        common_methods.sendResponse(res, false, 500, '', 'something wrong', error);
     }
 
 }
