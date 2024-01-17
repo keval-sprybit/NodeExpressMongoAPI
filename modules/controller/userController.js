@@ -3,6 +3,23 @@ const UserModel = require('../models/user'); // Import the User model
 
 exports.getAllUsers = async (req, res) => {
     try {
+
+        // console.log("start")
+
+
+        // // await Promise.resolve();
+
+        // // for (let i = 0; i < 10; i++) {
+        // //     console.log(i);
+        // // }
+        // setImmediate(() => {
+        //     for (let i = 0; i < 100; i++) {
+        //         console.log(i);
+        //     }
+        // });
+
+        console.log("end")
+
         const users = await UserModel.find();
         const response = {
             status: "success",

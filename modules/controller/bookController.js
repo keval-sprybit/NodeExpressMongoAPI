@@ -47,6 +47,7 @@ exports.getAllBooks = async (req, res) => {
                 title: book.title,
                 price: book.price,
                 pages: book.pages,
+                image: book.image,
                 user: {
                     _id: user._id,
                     name: user.name,
@@ -77,6 +78,7 @@ exports.createBook = async (req, res) => {
             title: req.body.title,
             price: req.body.price,
             pages: req.body.pages,
+            image: req.body.pages,
             user: author,
         });
         const doc = await bookDetails.save();
@@ -230,6 +232,7 @@ exports.getAllDataTableBooks = async (req, res) => {
             title: book.title,
             price: book.price,
             pages: book.pages,
+            image: book.image,
             user: {
                 _id: book.user._id,
                 name: book.user.name,
